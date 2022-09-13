@@ -1,13 +1,13 @@
-#include "http_request.hpp"
+#include "http/http_response.hpp"
 
 #include <sstream>
 
 namespace http_server {
 
-std::string HTTPRequest::build_message() {
+std::string HTTPResponse::build_message() {
     std::stringstream ss{};
 
-    ss << method << " " << target << " HTTP/" << version << '\n';
+    ss << "HTTP/" << version << ' ' << status << ' ' << status_message << '\n';
 
     for(auto& header : headers) {
         ss << header.first << ": " << header.second << '\n';
