@@ -15,6 +15,8 @@ struct ClientSocket {
     void close();
 };
 
+typedef std::function<void(ClientSocket, char*, int)> TCPReceiveHandler;
+
 class TCPServer {
 private:
     std::string port_{"8080"};
@@ -22,10 +24,10 @@ private:
     struct addrinfo* ai_result{ NULL };
     bool is_running_{ false };
 
-    std::function<void(ClientSocket, char*, int)> on_receive_{};
+    TCPReceiveHandler on_receive_{};
 public:
     void set_port(std::string port);
-    void set_receive_handler(std::function<void(ClientSocket, char*, int)> on_receive);
+    void set_receive_handler(TCPReceiveHandler on_receive);
 
     void init();
     void run();

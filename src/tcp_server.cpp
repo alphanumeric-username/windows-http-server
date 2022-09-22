@@ -10,7 +10,7 @@ void TCPServer::set_port(std::string port) {
     port_ = port;
 }
 
-void TCPServer::set_receive_handler(std::function<void(ClientSocket, char*, int)> on_receive) {
+void TCPServer::set_receive_handler(TCPReceiveHandler on_receive) {
     on_receive_ = on_receive;
 }
 
@@ -62,7 +62,7 @@ void TCPServer::init() {
         return;
     }
 
-    std::cout << "[TCP Server]: Bound to ???" /*<< result->ai_addr*/ << ':' << port_ << "'\n";
+    // std::cout << "[TCP Server]: Bound to ???" /*<< result->ai_addr*/ << ':' << port_ << "'\n";
     freeaddrinfo(result);
 }
 
@@ -102,6 +102,8 @@ void TCPServer::run() {
         closesocket(client_socket);
     }
 }
+
+void TCPServer::stop() { is_running_ = false; }
 
 void ClientSocket::send_data(char* data, int len) {
     send(sock, data, len, 0);

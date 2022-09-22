@@ -5,9 +5,9 @@
 - [x] TCPServer class;
 
 - [] HTTPServer class;
-    - [] Route parser;
+    - [] Target parser;
     - [] Query parameters parser;
-    - [] Endpoint based callback system;
+    - [x] Route based callback system;
 
 - [] Create response from file;
     - [] Load file and return the bytes in response;

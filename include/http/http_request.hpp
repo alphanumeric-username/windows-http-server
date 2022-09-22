@@ -12,10 +12,8 @@ struct HTTPRequest {
     std::string body{""};
     std::map<std::string, std::string> headers{};
 
-    HTTPRequest();
-    HTTPRequest(std::string message);
-    
     std::string build_message();
+    void initialize_from_message(std::string message);
 };
 
 }

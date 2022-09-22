@@ -5,9 +5,7 @@
 
 namespace http_server {
 
-struct URL {
-    std::string scheme{""};
-    std::string authority{""};
+struct URLTarget {
     std::string route{""};
     std::map<std::string, std::string> query_params{};
 

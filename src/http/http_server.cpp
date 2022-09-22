@@ -1,31 +1,74 @@
 #include "http/http_server.hpp"
 
+#include "str_tools.hpp"
+
+#include <iostream>
+
 namespace http_server {
 
-URL HTTPServer::parse_url(std::string url_str) {
-    URL url{};
-
-    auto scheme_end_idx {url_str.find_first_of("://", 0)};
-    if(scheme_end_idx == std::string::npos) {
-        return url; 
-    }
-
-    url.scheme = url_str.substr(0, scheme_end_idx);
-    url_str = url_str.substr(scheme_end_idx + 3);
-
-    auto authority_end_idx {url_str.find_first_of('/')};
-
-    url.authority = url_str.substr(0, authority_end_idx);
-    url_str = url_str.substr(authority_end_idx);
-
-    auto route_end_idx {url_str.find_first_of('?')};
-    if(route_end_idx != std::string::npos) {
-        // TODO: Parse params
-    }
-
-    url.is_valid = true;
-
-    return url;
+void HTTPServer::set_port(int port) {
+    server_.set_port(std::to_string(port));
 }
+
+void HTTPServer::init() {
+    auto& callbacks = callbacks_;
+
+    server_.set_receive_handler([&](ClientSocket client_socket, char* data, int len) {
+        HTTPRequest req {};
+        req.initialize_from_message(std::string{data});
+
+        HTTPResponse res{};
+
+        if(callbacks.count({req.method, req.target}) > 0) {
+            res = callbacks.at({req.method, req.target})(req);
+        } else {
+            res.status = 404;
+            res.status_message = "Not found";
+            res.headers.insert({"Content-Length", std::to_string(0)});
+            std::cout << "Not found\n";
+        }
+
+        auto res_message{res.build_message()};
+        client_socket.send_data(res_message.data(), res_message.size());
+    });
+
+    set_port(8080);
+
+    server_.init(); 
+}
+void HTTPServer::run() { server_.run(); }
+void HTTPServer::stop() { server_.stop(); }
+
+URLTarget HTTPServer::parse_target(std::string target_str) {
+    URLTarget url_target{};
+
+    auto params_start_idx {target_str.find_first_of('?')};
+    
+    url_target.route = target_str.substr(params_start_idx);
+
+    if(params_start_idx != std::string::npos && target_str.substr(params_start_idx).size() > 1) {
+        target_str = target_str.substr(params_start_idx + 1);
+        auto assignments {str_tools::split(target_str, "&")};
+
+        for(auto a : assignments) {
+            auto parsed_assignment {str_tools::split(a, "=")};
+            url_target.query_params.insert_or_assign(parsed_assignment[0], parsed_assignment[1]);
+        }
+    }
+
+    url_target.is_valid = true;
+
+    return url_target;
+}
+
+void HTTPServer::set_callback(std::string method, std::string route, HTTPReceiveHandler callback) {
+    callbacks_.insert_or_assign({method, route}, callback);
+}
+
+void HTTPServer::on_get(std::string route, HTTPReceiveHandler callback) { set_callback("GET", route, callback); }
+void HTTPServer::on_post(std::string route, HTTPReceiveHandler callback) { set_callback("POST", route, callback); }
+void HTTPServer::on_put(std::string route, HTTPReceiveHandler callback) { set_callback("PUT", route, callback); }
+void HTTPServer::on_delete(std::string route, HTTPReceiveHandler callback) { set_callback("DELETE", route, callback); }
+
 
 }
