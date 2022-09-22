@@ -8,6 +8,7 @@
     - [] Target parser;
     - [] Query parameters parser;
     - [x] Route based callback system;
+    - [] Normalize routes;
 
 - [] Create response from file;
     - [] Load file and return the bytes in response;

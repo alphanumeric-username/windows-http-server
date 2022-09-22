@@ -55,7 +55,7 @@ void test_server_2() {
     
     svr.init();
 
-    svr.on_get("/", [&](http_server::HTTPRequest req) {
+    svr.on_get("/", [&](auto req) {
         http_server::HTTPResponse res{};
 
         res.status = 200;
