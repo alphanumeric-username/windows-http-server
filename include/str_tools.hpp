@@ -14,4 +14,6 @@ std::string trim(std::string raw);
 std::vector<std::string> split(std::string input, std::string separator);
 std::vector<std::string> split_remove_empty(std::string input, std::string separator);
 
+std::string lowercase(std::string input);
+std::string uppercase(std::string input);
 }

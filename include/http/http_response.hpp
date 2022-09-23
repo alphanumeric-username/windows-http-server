@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-namespace http_server {
+namespace w8s {
 
 struct HTTPResponse {
     std::string version{"1.1"};

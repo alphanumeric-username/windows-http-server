@@ -1,5 +1,7 @@
 #include "str_tools.hpp"
 
+#include <cctype>
+
 namespace str_tools {
 
 bool is_whitespace(char c) {
@@ -52,5 +54,30 @@ std::vector<std::string> split_remove_empty(std::string input, std::string separ
 
     return output;
 }
+
+std::string lowercase(std::string input) {
+    std::vector<char> output_raw{};
+
+    for(char c : input) {
+        output_raw.emplace_back(std::tolower(c));
+    }
+
+    output_raw.emplace_back('\0');
+
+    return std::string{output_raw.data()};
+}
+
+std::string uppercase(std::string input) {
+    std::vector<char> output_raw{};
+
+    for(char c : input) {
+        output_raw.emplace_back(std::toupper(c));
+    }
+
+    output_raw.emplace_back('\0');
+
+    return std::string{output_raw.data()};
+}
+
 
 }

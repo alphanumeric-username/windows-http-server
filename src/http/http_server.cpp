@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace http_server {
+namespace w8s {
 
 void HTTPServer::set_port(int port) {
     server_.set_port(std::to_string(port));
@@ -19,8 +19,10 @@ void HTTPServer::init() {
 
         HTTPResponse res{};
 
-        if(callbacks.count({req.method, req.target}) > 0) {
-            res = callbacks.at({req.method, req.target})(req);
+        auto url_target { parse_target(req.target) };
+
+        if(callbacks.count({req.method, url_target.route}) > 0) {
+            res = callbacks.at({req.method, url_target.route})(req);
         } else {
             res.status = 404;
             res.status_message = "Not found";
@@ -44,8 +46,8 @@ URLTarget HTTPServer::parse_target(std::string target_str) {
 
     auto params_start_idx {target_str.find_first_of('?')};
     
-    url_target.route = target_str.substr(params_start_idx);
-
+    url_target.route = normalize_route(target_str.substr(0, params_start_idx));
+    
     if(params_start_idx != std::string::npos && target_str.substr(params_start_idx).size() > 1) {
         target_str = target_str.substr(params_start_idx + 1);
         auto assignments {str_tools::split(target_str, "&")};
@@ -62,7 +64,10 @@ URLTarget HTTPServer::parse_target(std::string target_str) {
 }
 
 void HTTPServer::set_callback(std::string method, std::string route, HTTPReceiveHandler callback) {
-    callbacks_.insert_or_assign({method, route}, callback);
+    method = str_tools::uppercase(str_tools::trim(method));
+    route = normalize_route(route);
+
+    callbacks_.insert_or_assign({ method, route}, callback);
 }
 
 void HTTPServer::on_get(std::string route, HTTPReceiveHandler callback) { set_callback("GET", route, callback); }

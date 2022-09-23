@@ -10,7 +10,7 @@
 #include <functional>
 #include <tuple>
 
-namespace http_server {
+namespace w8s {
 
 typedef std::function<HTTPResponse(HTTPRequest)> HTTPReceiveHandler;
 

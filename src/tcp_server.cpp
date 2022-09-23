@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace http_server {
+namespace w8s {
 
 bool winsock_was_initialized { false };
 

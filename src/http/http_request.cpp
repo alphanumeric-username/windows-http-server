@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-namespace http_server {
+namespace w8s {
 
 void HTTPRequest::initialize_from_message(std::string message) {
     auto lines {str_tools::split(message, "\n")};

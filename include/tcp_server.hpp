@@ -6,7 +6,7 @@
 #include <functional>
 #include <string>
 
-namespace http_server {
+namespace w8s {
 
 struct ClientSocket {
     SOCKET sock{ INVALID_SOCKET };

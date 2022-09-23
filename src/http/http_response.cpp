@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace http_server {
+namespace w8s {
 
 std::string HTTPResponse::build_message() {
     std::stringstream ss{};
